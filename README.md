@@ -1,56 +1,13 @@
-# node-library-template
+# collectd
 
->A repository template for a Node.js library.
-
-## Structure
-
-This repository is written in TypeScript and uses [gts](https://github.com/google/gts) for linting and formatting. It is set up to be published to npm automatically using GitHub Actions.
-
-Commits are standardized through Conventional Commits and Semantic Versioning. This is enforced by [commitlint](https://www.npmjs.com/package/@commitlint/cli).
-Pushes to the `master` branch create a new release and publish to npm.
-
-The [lib](./lib) directory contains the library source code.
-The [test](./test) directory contains the tests. Tests are written with [mocha](https://www.npmjs.com/package/mocha) and [chai](https://www.npmjs.com/package/chai).
-
-## Usage
-
-1. Initial setup
-	1. Clone this repository.
-	2. Run `npm install`.
-	3. Run `npm run setup` to set up the project.
-
-2. License
-	1. Choose a license and add it to the `LICENSE` file.
-	2. Change the license badge to the `README.md` file.
-	3. Change the license in the `package.json` file.
-	4. Change the license code in the `.vscode/settings.json` file.
-
-3. Final changes
-	1. Make sure to remove this section from the `README.md` file.
-	2. Change the `README.md` file to describe your project.
-	3. Add a description in the `package.json` file.
-	4. Add the repository secret `NPM_TOKEN` in order for automated npm publishing to work.
-	5. Run `npm install` to clean up the `package-lock.json` file.
-
-4. Begin development!
-
-**BELOW IS THE README FOR THE TEMPLATE REPOSITORY.**
-**REMOVE THIS SECTION FROM YOUR README.**
-
----
----
----
-
-# node-library-template
-
->A repository template for a Node.js library.
+>A library for collecting metrics from the collectd daemon written in TypeScript.
 
 <br>
 
-[![Downloads](https://badgen.net/npm/dt/@pextra/node-library-template)](https://www.npmjs.com/package/@pextra/node-library-template)
-[![npm dependents](https://badgen.net/npm/dependents/@pextra/node-library-template)](https://www.npmjs.com/package/@pextra/node-library-template?activeTab=dependents)
-[![Version](https://badgen.net/npm/v/@pextra/node-library-template)](https://www.npmjs.com/package/@pextra/node-library-template)
-[![License](https://badgen.net/npm/license/@pextra/node-library-template)](https://opensource.org/license/mit/)
+[![Downloads](https://badgen.net/npm/dt/@pextra/collectd)](https://www.npmjs.com/package/@pextra/collectd)
+[![npm dependents](https://badgen.net/npm/dependents/@pextra/collectd)](https://www.npmjs.com/package/@pextra/collectd?activeTab=dependents)
+[![Version](https://badgen.net/npm/v/@pextra/collectd)](https://www.npmjs.com/package/@pextra/collectd)
+[![License](https://badgen.net/npm/license/@pextra/collectd)](https://opensource.org/license/apache-2-0)
 
 ## NOTICE
 
@@ -63,12 +20,63 @@ Most commands are implemented, but a few are not yet. Not many of the command op
 ## Install
 
 ```sh
-npm install @pextra/node-library-template
+npm install @pextra/collectd
 ```
+
+Currently, Bun is not supported due to the [lack of support for the `dgram` module](https://github.com/oven-sh/bun/issues/1630).
 
 ## Usage
 
-Your usage instructions here.
+### CollectdClient
+
+Create a new instance of the `CollectdClient` class. The constructor takes an optional `options` object with the following properties:
+```typescript
+address: string; // The address of the collectd server. Default: '239.192.74.66' (ipv4 multicast) or 'ff18::efc0:4a42' (ipv6 multicast).
+port: number; // The port of the collectd server. Default: 25826.
+protocol: SocketType; // The protocol to use. Default: 'udp4'.
+```
+
+The `CollectdClient` class has the following methods:
+```typescript
+start(); // Start listening for collectd packets.
+close(); // Stop listening for collectd packets.
+```
+
+The `CollectdClient` class is an [EventEmitter](https://nodejs.org/api/events.html#class-eventemitter) emits the following events:
+```typescript
+'data': (data: {values: Array<CollectdValuePacket>, notifications: Array<CollectdNotificationPacket>}) => void; // Emitted when a collectd packet is received.
+'error': (error: Error) => void; // Emitted when an error occurs.
+'close': () => void; // Emitted when the client is closed.
+```
+
+See [lib/types/index.ts](./lib/types/index.ts) for all the types used in the library.
+
+### Setting up collectd
+
+`@pextra/collectd` depends on the `network` plugin being enabled in collectd. To enable the `network` plugin, add the following to your collectd configuration file:
+```sh
+LoadPlugin network
+
+<Plugin network>
+        Server "<address>" "<port>"
+</Plugin>
+```
+
+The library would then be able to receive collectd packets from the collectd server:
+```typescript
+import {CollectdClient} from '@pextra/collectd';
+
+const client = new CollectdClient({
+	address: '<address>',
+	port: '<port>',
+});
+
+client.on('data', (data) => {
+	console.log(data);
+});
+
+client.start();
+```
 
 ## Support/Contact
 
@@ -84,4 +92,4 @@ We use [gts](https://github.com/google/gts) for linting and formatting.
 
 ## License
 
-node-library-template is licensed under the [MIT License](./LICENSE).
+collectd is licensed under the [Apache 2.0 License](./LICENSE).

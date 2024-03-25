@@ -3,5 +3,5 @@
 		"source.fixAll.eslint": true
 	},
 	"copyrightInserter.holder": "Pextra Inc.",
-	"copyrightInserter.license": "mit",
+	"copyrightInserter.license": "apache",
 }

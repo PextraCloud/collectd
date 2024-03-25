@@ -1,7 +1,7 @@
 {
-  "name": "@pextra/node-library-template",
+  "name": "@pextra/collectd",
   "version": "0.0.0",
-  "description": "A repository template for a Node.js library.",
+  "description": "A library for collecting metrics from the collectd daemon written in TypeScript.",
   "main": "dist/index.js",
   "exports": {
     "node": {
@@ -27,13 +27,12 @@
     "gts": "^5.2.0",
     "husky": "^8.0.3",
     "mocha": "^10.2.0",
-    "typescript": "~5.2.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "~5.2.0"
   },
   "scripts": {
-	"setup": "sh projectSetup.sh",
-	"postinstall": "husky install",
-
+    "setup": "sh projectSetup.sh",
+    "postinstall": "husky install",
     "lint": "gts lint",
     "fix": "gts fix",
     "build": "tsc -p tsconfig.build.json",
@@ -53,9 +52,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PextraCloud/node-library-template.git"
+    "url": "git+https://github.com/PextraCloud/collectd.git"
   },
   "keywords": [],
   "author": "Pextra Inc.",
-  "license": "UNLICENSED"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "binary-parser": "^2.2.1",
+    "ctype": "^0.5.5"
+  }
 }
