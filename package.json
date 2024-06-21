@@ -1,6 +1,6 @@
 {
   "name": "@pextra/collectd",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A library for collecting metrics from the collectd daemon written in TypeScript.",
   "main": "dist/index.js",
   "exports": {
